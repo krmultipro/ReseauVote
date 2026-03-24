@@ -1,0 +1,21 @@
+import { betterAuth } from "better-auth";
+import { mongodbAdapter } from "better-auth/adapters/mongodb";
+import { nextCookies } from "better-auth/next-js";
+import { MongoClient } from "mongodb";
+
+const client = new MongoClient(process.env.MONGODB_URI!);
+const db = client.db();
+
+export const auth = betterAuth({
+  database: mongodbAdapter(db, {
+    client,
+  }),
+  emailAndPassword: {
+    enabled: true,
+    minPasswordLength: 6,
+  },
+  plugins: [nextCookies()],
+});
+/* creer automatiquement les collections user, session, account et verification dans MongoDB.
+Il gere le hash de mot de passe, la creation de sessions et les cookies. Le pluging next cookie permet l'integration avec NextJs.
+*/
